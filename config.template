@@ -1,0 +1,14 @@
+# 腾讯云DNSPOD自动更新IP配置文件模板
+# 使用方法: 复制此文件到 ~/.config/tencent-dns-updater/config 并修改为你的实际配置
+
+# 域名配置
+DOMAIN="example.com"    # 你的主域名
+SUB_DOMAIN="@"          # 子域名，使用@表示主域名，或填写如"www"等子域名
+
+# API密钥配置
+# 从腾讯云控制台获取：https://console.cloud.tencent.com/cam/capi
+SECRET_ID="your-secret-id-here"
+SECRET_KEY="your-secret-key-here"
+
+# DNS记录配置
+TTL=600                 # TTL值，单位秒
