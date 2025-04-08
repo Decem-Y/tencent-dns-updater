@@ -83,8 +83,6 @@ mkdir -p ~/.config/tencent-dns-updater/
 
 ```bash
 touch ~/.config/tencent-dns-updater/config
-
-chmod 600 ~/.config/tencent-dns-updater/config
 ```
 
 添加以下内容：
