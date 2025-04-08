@@ -1,6 +1,10 @@
 # 腾讯云 DNS 自动更新IP工具
 
 ![访问统计](https://visitor-badge.laobi.icu/badge?page_id=Decem-Y.tencent-dns-updater)
+[![License](https://img.shields.io/badge/license-Apache--2.0-orange.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![GitHub stars](https://img.shields.io/github/stars/Decem-Y/tencent-dns-updater.svg)](https://github.com/Decem-Y/tencent-dns-updater/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/Decem-Y/tencent-dns-updater.svg)](https://github.com/Decem-Y/tencent-dns-updater/issues)
+[![GitHub forks](https://img.shields.io/github/forks/Decem-Y/tencent-dns-updater.svg)](https://github.com/Decem-Y/tencent-dns-updater/network)
 
 这是一套自动更新域名DNS记录的脚本工具，用于动态IP环境下保持域名解析与当前公网IP的同步。主要适用于家庭宽带、小型服务器等IP地址会变化的场景。
 
