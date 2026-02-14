@@ -56,9 +56,10 @@ chmod +x "$API_SCRIPT"
 # 获取当前公网IP
 get_current_ip() {
     # 尝试多个IP获取服务，增加可靠性
-    IP=$(curl -s https://api.ipify.org || 
-         curl -s https://icanhazip.com || 
-         curl -s https://ifconfig.me)
+    # 使用 --noproxy '*' 绕过代理，确保获取的是服务器真实公网IP而非代理IP
+    IP=$(curl -s --noproxy '*' https://api.ipify.org || 
+         curl -s --noproxy '*' https://icanhazip.com || 
+         curl -s --noproxy '*' https://ifconfig.me)
     
     if [[ -z "$IP" ]]; then
         log "Error: 无法获取公网IP地址"
@@ -131,30 +132,20 @@ sync_time() {
         fi
     fi
     
-    # 尝试使用timedatectl同步
+    # 检查timedatectl同步状态（不执行set-ntp避免需要密码认证）
     if command -v timedatectl &> /dev/null; then
-        log "使用timedatectl同步时间..."
-        timedatectl set-ntp true &>/dev/null
-        sleep 2
         if timedatectl status | grep -i "synchronized: yes" &>/dev/null; then
-            log "系统时间已通过timedatectl成功同步"
+            log "系统时间已同步（timedatectl确认）"
             return 0
         else
-            log "警告: timedatectl同步失败"
+            log "警告: 系统时间未同步"
         fi
     fi
     
-    # 使用systemd-timesyncd同步（如果可用）
+    # 检查systemd-timesyncd状态（不重启服务避免需要权限）
     if systemctl is-active systemd-timesyncd &>/dev/null; then
-        log "使用systemd-timesyncd同步时间..."
-        systemctl restart systemd-timesyncd &>/dev/null
-        sleep 2
-        if systemctl status systemd-timesyncd | grep -i "synchronizing to time server" &>/dev/null; then
-            log "系统时间已通过systemd-timesyncd成功同步"
-            return 0
-        else
-            log "警告: systemd-timesyncd同步失败"
-        fi
+        log "systemd-timesyncd正在运行，时间应已同步"
+        return 0
     fi
     
     # 如果所有同步尝试都失败

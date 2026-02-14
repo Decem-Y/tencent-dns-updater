@@ -15,8 +15,9 @@
 - 支持自定义域名、子域名和TTL配置
 - 支持通过独立的配置文件设置敏感信息
 - 自动系统时间同步，避免API调用因时间不同步导致的认证失败
+- **自动绕过代理获取真实IP**，适用于配置了代理环境变量的服务器
 - 完整的日志记录
-- 支持作为定时任务运行
+- 支持 systemd 服务实现开机自启和定时任务
 
 ## 文件说明
 
@@ -125,6 +126,35 @@ chmod 600 ~/.config/tencent-dns-updater/config
 
 ### 设置定时任务
 
+#### 方式一：使用 systemd 定时器（推荐）
+
+systemd 方式更现代、可靠，支持开机自启，日志管理更方便。详细配置请查看 [systemd/README.md](systemd/README.md)。
+
+快速配置：
+
+```bash
+# 1. 复制服务文件
+mkdir -p ~/.config/systemd/user
+cp systemd/dns-updater.service ~/.config/systemd/user/
+cp systemd/dns-updater.timer ~/.config/systemd/user/
+
+# 2. 修改路径（将 YOUR_USERNAME 替换为实际用户名）
+sed -i "s|YOUR_USERNAME|$USER|g" ~/.config/systemd/user/dns-updater.service
+
+# 3. 启用并启动服务
+systemctl --user daemon-reload
+systemctl --user enable dns-updater.timer
+systemctl --user start dns-updater.timer
+
+# 4. 启用 linger（确保未登录时也能运行）
+sudo loginctl enable-linger $USER
+
+# 查看状态
+systemctl --user status dns-updater.timer
+```
+
+#### 方式二：使用 crontab
+
 通过crontab设置定时运行：
 
 ```bash
@@ -152,6 +182,17 @@ crontab -e
 - 确保系统时间同步正确，API调用依赖准确的时间戳
 - 验证网络连接是否正常，特别是到腾讯云API的连接
 - 检查API密钥是否正确且有效
+- **代理问题**：如果服务器配置了 `HTTP_PROXY`/`HTTPS_PROXY` 等代理环境变量（如通过 SSH RemoteForward 转发的代理），脚本会自动使用 `--noproxy '*'` 参数绕过代理，确保获取的是服务器真实公网 IP 而非代理出口 IP
+
+### 查看 systemd 服务日志
+
+```bash
+# 实时查看日志
+journalctl --user -u dns-updater.service -f
+
+# 查看最近50条日志
+journalctl --user -u dns-updater.service --no-pager -n 50
+```
 
 ## 许可说明
 

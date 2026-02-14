@@ -1,0 +1,13 @@
+[Unit]
+Description=Tencent DNSPod IP Updater
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/YOUR_USERNAME/tencent-dns-updater/update_ip.sh
+WorkingDirectory=/home/YOUR_USERNAME/tencent-dns-updater
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+
+[Install]
+WantedBy=default.target
